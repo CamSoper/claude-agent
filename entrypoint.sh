@@ -2,7 +2,7 @@
 set -euo pipefail
 
 MCP_TEMPLATE="/etc/claude-agent/mcp.json.tmpl"
-MCP_RENDERED="/root/.mcp.json"
+MCP_RENDERED="$HOME/.mcp.json"
 CRONTAB="/etc/supercronic/crontab"
 
 if [ -f "$MCP_TEMPLATE" ]; then

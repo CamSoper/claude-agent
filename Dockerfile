@@ -27,9 +27,16 @@ RUN npm install -g \
         @softeria/ms-365-mcp-server \
     && npm cache clean --force
 
+# Non-root user. claude CLI refuses --dangerously-skip-permissions as root,
+# which we need for unattended cron invocations. UID 1000 matches the typical
+# first-user UID on Debian/Ubuntu so bind-mounted host paths created by the
+# SSH user are writable without chowning.
+RUN useradd -m -u 1000 -s /bin/bash claude
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-WORKDIR /root
+USER claude
+WORKDIR /home/claude
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/entrypoint.sh"]
