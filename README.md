@@ -18,12 +18,12 @@ The image is inert without the deployer providing these:
 
 | Path inside container | Purpose | Typical mode |
 | --- | --- | --- |
-| `/home/claude/.claude/` | Claude credentials, MCP token caches, projects state | rw, persistent |
-| `/home/claude/.claude/skills/` | Skills directory (overlay on the auth volume) | ro |
+| `/home/node/.claude/` | Claude credentials, MCP token caches, projects state | rw, persistent |
+| `/home/node/.claude/skills/` | Skills directory (overlay on the auth volume) | ro |
 | `/etc/claude-agent/mcp.json.tmpl` | MCP server declarations with `${VAR}` placeholders | ro |
 | `/etc/supercronic/crontab` | Job schedule | ro |
 
-The entrypoint renders `mcp.json.tmpl` to `/home/claude/.mcp.json` (project-scope, picked up because `WORKDIR` is `/root`) using `envsubst`, then execs supercronic.
+The entrypoint renders `mcp.json.tmpl` to `/home/node/.mcp.json` (project-scope, picked up because `WORKDIR` is `/root`) using `envsubst`, then execs supercronic.
 
 ## Bootstrap (one-time, post-deploy)
 
@@ -35,7 +35,7 @@ Both steps require an interactive TTY. Run them after the container is up:
 docker exec -it claude-agent claude setup-token
 ```
 
-Follow the OAuth prompt from any browser. The credential persists at `/home/claude/.claude/.credentials.json` on the auth volume and survives image rebuilds.
+Follow the OAuth prompt from any browser. The credential persists at `/home/node/.claude/.credentials.json` on the auth volume and survives image rebuilds.
 
 ### 2. Microsoft 365 device flow
 
@@ -81,7 +81,7 @@ This image is consumed by [`home-lab-iac`](https://github.com/CamSoper/home-lab-
 docker build -t claude-agent:dev .
 docker run --rm -it \
     -v "$PWD/test/auth:/root/.claude" \
-    -v "$PWD/test/skills:/home/claude/.claude/skills:ro" \
+    -v "$PWD/test/skills:/home/node/.claude/skills:ro" \
     -v "$PWD/test/mcp.json:/etc/claude-agent/mcp.json.tmpl:ro" \
     -v "$PWD/test/crontab:/etc/supercronic/crontab:ro" \
     claude-agent:dev
