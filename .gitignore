@@ -1,0 +1,3 @@
+test/
+*.local
+.DS_Store
